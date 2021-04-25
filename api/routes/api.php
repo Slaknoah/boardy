@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\AdvertController;
+use App\Http\Controllers\API\TokenController;
+use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'v1'], function () {
+    Route::get('/me', [ UserController::class, 'show'] )->name('api.me');
+
+    Route::get('/tokens', [ TokenController::class, 'index' ])->name('api.tokens.get');
+    Route::post('/tokens', [ TokenController::class, 'create' ])->name('api.tokens.create');
+
+    Route::get('/adverts', [ AdvertController::class, 'index'])->name('api.adverts.get');
+    Route::get('/adverts/{advert}', [ AdvertController::class, 'show'])->name('api.advert.get');
+    Route::post('/adverts', [ AdvertController::class, 'store'])->name('api.adverts.create');
 });
