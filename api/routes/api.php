@@ -22,6 +22,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::get('/tokens', [ TokenController::class, 'index' ])->name('api.tokens.get');
     Route::post('/tokens', [ TokenController::class, 'create' ])->name('api.tokens.create');
+    Route::delete('/tokens/{tokenID}', [ TokenController::class, 'revoke' ])->name('api.tokens.revoke');
 
     Route::get('/adverts', [ AdvertController::class, 'index'])->name('api.adverts.get');
     Route::get('/adverts/{advert}', [ AdvertController::class, 'show'])->name('api.advert.get');

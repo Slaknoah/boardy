@@ -58,7 +58,7 @@ class TokenTest extends TestCase
     {
         $this->user->createToken('Test Token');
 
-        $response = $this->actingAs($this->user)
+        $this->actingAs($this->user)
             ->getJson(route('api.tokens.get'))
             ->assertStatus(200)
             ->assertJson([
@@ -69,5 +69,21 @@ class TokenTest extends TestCase
                     ]
                 ]
             ]);
+    }
+
+    public function testUserCanRevokeToken()
+    {
+        $token = $this->user->createToken('Test token');
+        $token_id = $token->toArray()['accessToken']->id;
+
+        $this->actingAs($this->user)
+            ->deleteJson(route('api.tokens.revoke', ['tokenID' => $token_id]))
+            ->assertStatus(204);
+
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id'  => $this->user->id,
+            'name'          => 'Test token',
+            'id'            => $token_id
+        ]);
     }
 }

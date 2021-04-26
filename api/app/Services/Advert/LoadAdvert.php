@@ -17,13 +17,13 @@ class LoadAdvert
     {
         $this->query    = Advert::query();
         $this->id       = $advertID;
-        $fields         = isset($parameters['fields']) ? array_unique($parameters['fields']) : [];
-        $this->fields   = array_merge( Advert::$defaultFields, $fields );
+        $fields         = isset($parameters['fields']) ? $parameters['fields'] : [];
+        $this->fields   = array_unique( array_merge( Advert::$defaultFields, $fields ) );
     }
 
     public function load()
     {
-        $advert = $this->query->find($this->id)->select($this->fields)->first();
+        $advert = $this->query->find($this->id, $this->fields);
 
         return $advert;
     }

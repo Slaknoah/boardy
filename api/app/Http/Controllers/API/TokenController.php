@@ -11,7 +11,7 @@ class TokenController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum')->only('create', 'index');
+        $this->middleware('auth:sanctum')->only('create', 'index', 'revoke');
     }
 
     public function create(Request $request)
@@ -26,5 +26,12 @@ class TokenController extends Controller
     public function index(Request $request)
     {
         return ['tokens' => $request->user()->tokens];
+    }
+
+    public function revoke(Request $request, $tokenID)
+    {
+        $request->user()->tokens()->where('id', $tokenID)->delete();
+
+        return response()->json('', 204);
     }
 }
