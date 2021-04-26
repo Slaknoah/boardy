@@ -27,6 +27,7 @@ $ cd api
 
 # Копировать файл .env
 $ cp .env.example .env
+$ cp .env.testing.example .env
 
 # Перейти в папку laradock (.../boardy/api/laradock)
 $ cd laradock
@@ -35,7 +36,7 @@ $ cd laradock
 $ cp env-example .env
 
 # Запустить докер
-$ docker-compose up -d nginx postgres
+$ docker-compose up -d nginx postgres redis redis-webui
 $ docker-compose exec workspace bash
 ```
 Введите следующие команды в открывшемся bash

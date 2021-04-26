@@ -12,6 +12,7 @@ use App\Services\Advert\CreateAdvert;
 use App\Services\Advert\LoadAdvert;
 use App\Services\Advert\LoadAdverts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AdvertController extends Controller
 {
@@ -20,13 +21,35 @@ class AdvertController extends Controller
         $this->middleware('auth:sanctum')->except('');
     }
 
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function index(Request $request)
     {
-        $loadAdverts = new LoadAdverts($request->all());
+        $params = [
+            'page'      => 1,
+            'order_by'  => '',
+            'order_direction' => '',
+            'take'      => '',
+            'search'    => '',
+            'user'      => $request->user()->id
+        ];
+        foreach (array_keys($params) as $param) {
+            if (request()->has($param))
+                $params[$param] = request()->input($param);
+        }
+        $prefix = 'adverts_';
+        $hashed = md5(json_encode($params));
+        $cacheKey = $prefix . $hashed;
 
-        $adverts = $loadAdverts->load();
+        return Cache::remember($cacheKey, 60*60*24, function () use ($request) {
+            $loadAdverts = new LoadAdverts($request->all());
 
-        return ( AdvertResource::collection($adverts) )->response();
+            $adverts = $loadAdverts->load();
+
+            return ( AdvertResource::collection($adverts) )->response();
+        });
     }
 
     public function show(Request $request, $advert)
